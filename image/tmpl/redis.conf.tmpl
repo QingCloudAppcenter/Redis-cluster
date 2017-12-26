@@ -1,0 +1,58 @@
+aof-rewrite-incremental-fsync yes 
+appendfilename appendonly.aof 
+auto-aof-rewrite-percentage 10
+auto-aof-rewrite-min-size 64mb 
+bind 0.0.0.0
+client-output-buffer-limit normal 0 0 0
+client-output-buffer-limit pubsub 32mb 8mb 60
+client-output-buffer-limit slave 256mb 64mb 60 
+daemonize yes
+databases 16 
+dbfilename dump.rdb
+dir /data/redis
+hll-sparse-max-bytes 3000
+hz 10
+logfile /data/redis/logs/redis-server.log
+loglevel verbose
+lua-time-limit 5000
+pidfile /var/run/redis/redis-server.pid
+repl-disable-tcp-nodelay no  
+rdbchecksum yes
+rdbcompression yes
+save "" 
+slave-read-only yes 
+slave-serve-stale-data yes 
+slowlog-max-len 128 
+stop-writes-on-bgsave-error yes
+tcp-backlog 511 
+cluster-enabled yes
+cluster-config-file /data/redis/nodes-6379.conf
+cluster-node-timeout 15000
+cluster-migration-barrier 5000            
+port 6379
+slave-priority 100
+
+maxmemory {{with get "/env/appcenterignore-maxmemory-percent"}}{{$memory := getv "/host/memory"}}{{$memory := mul .Value $memory}}{{$tmp := mod $memory 100}}{{$memory := sub $memory $tmp}}{{mul 0.01 $memory}}mb{{end}}
+
+
+{{range gets "/env/*"}}{{$k := split (.Key) "-"}}{{if ne (index $k 0) "/env/appcenterignore"}}{{$v := .Value}}{{ if gt ( len ( $v ) ) 0 }}{{base .Key}} {{.Value}}
+{{ else }}{{base .Key}} ""
+{{end}}{{end}}{{end}}
+
+
+
+{{$config := getv "/env/appcenterignore-enable-config"}}
+{{if eq $config 0}}
+{{$cluster_id := getv "/cluster/cluster_id"}}{{$node_id := getv "/host/node_id"}}
+rename-command CONFIG {{$cluster_id}}{{$node_id}}CONFIG
+rename-command BGREWRITEAOF {{$cluster_id}}{{$node_id}}BGREWRITEAOF
+rename-command BGSAVE {{$cluster_id}}{{$node_id}}BGSAVE
+rename-command DEBUG {{$cluster_id}}{{$node_id}}DEBUG
+rename-command SAVE {{$cluster_id}}{{$node_id}}SAVE
+rename-command SHUTDOWN {{$cluster_id}}{{$node_id}}SHUTDOWN
+rename-command SLAVEOF {{$cluster_id}}{{$node_id}}SLAVEOF
+{{end}}
+
+{{$pass := getv "/env/appcenterignore-requirepass"}}
+{{if eq $pass ""}}#{{end}}requirepass {{$pass}}
+{{if eq $pass ""}}#{{end}}masterauth {{$pass}}

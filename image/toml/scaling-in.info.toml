@@ -1,0 +1,6 @@
+[template]
+src = "scaling-in.info.tmpl"
+dest = "/opt/redis/scaling-in.info"
+keys = [
+  "/",
+]

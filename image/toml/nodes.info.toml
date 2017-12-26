@@ -1,0 +1,6 @@
+[template]
+src = "nodes.info.tmpl"
+dest = "/opt/redis/nodes.info"
+keys = [
+  "/",
+]

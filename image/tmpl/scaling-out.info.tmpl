@@ -1,0 +1,4 @@
+{{range $dir := lsdir "/adding-hosts/master/"}}{{$ip := printf "/adding-hosts/master/%s/ip" $dir}}
+master {{getv $ip}}{{end}}
+{{range $dir := lsdir "/adding-hosts/master-replica/"}}{{$ip := printf "/adding-hosts/master-replica/%s/ip" $dir}}
+master-replica {{getv $ip}}{{end}}

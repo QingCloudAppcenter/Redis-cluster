@@ -1,0 +1,6 @@
+[template]
+src = "scaling-out.info.tmpl"
+dest = "/opt/redis/scaling-out.info"
+keys = [
+  "/",
+]

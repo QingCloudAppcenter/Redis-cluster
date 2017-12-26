@@ -1,0 +1,7 @@
+[template]
+src = "redis.conf.tmpl"
+dest = "/opt/redis/redis.conf"
+keys = [
+  "/",
+]
+reload_cmd = "/opt/redis/bin/restart-redis-server.sh"
